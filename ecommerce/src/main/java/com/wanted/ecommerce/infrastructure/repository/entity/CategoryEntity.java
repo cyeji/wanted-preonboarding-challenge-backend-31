@@ -1,13 +1,19 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 /**
  * 상품 카테고리
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "categories")
 public class CategoryEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)

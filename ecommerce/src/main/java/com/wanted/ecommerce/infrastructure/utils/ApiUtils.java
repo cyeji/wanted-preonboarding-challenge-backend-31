@@ -1,5 +1,8 @@
 package com.wanted.ecommerce.infrastructure.utils;
 
+import lombok.Builder;
+import lombok.Getter;
+
 /**
  * apiUtil 설정
  *
@@ -7,16 +10,19 @@ package com.wanted.ecommerce.infrastructure.utils;
  */
 public class ApiUtils<T> {
 
-    private static final String PROCESS_SUCESS = "요청이 성공적으로 수행하였습니다.";
+    private static final String PROCESS_SUCCESS = "요청이 성공적으로 수행하였습니다.";
 
     private ApiUtils() {
         throw new AssertionError();
     }
 
     public static <T> ApiResult<T> success(T data) {
-        return new ApiResult<>(true, data, PROCESS_SUCESS);
+        return new ApiResult<>(
+            true, data, PROCESS_SUCCESS);
     }
 
+    @Getter
+    @Builder
     public static class ApiResult<T> {
 
         private Boolean success;

@@ -1,35 +1,37 @@
 spring:
   application:
     name: ecommerce
+
   datasource:
-    hikari:
-      jdbc-url: jdbc:postgresql://localhost:3306/ecommerce
-      driver-class-name: com.postgresql.Driver
-      username: root
-      password: admin
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-          format_sql: true
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    driver-class-name: org.postgresql.Driver
+    username: root
+    password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-        show-sql: true
-    sql:
-      init:
-        mode: always
-        schema-locations:
-          - file:ddl.sql
-        data-locations:
-          - file:data/sellers.sql
-          - file:data/brands.sql
-          - file:data/categories.sql
-          - file:data/tags.sql
-          - file:data/products.sql
-          - file:data/product_options.sql
-          - file:data/product_extended.sql
-          - file:data/users.sql
-          - file:data/reviews.sql
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+      schema-locations:
+        - file:ddl.sql
+      data-locations:
+        - file:data/sellers.sql
+        - file:data/brands.sql
+        - file:data/categories.sql
+        - file:data/tags.sql
+        - file:data/products.sql
+        - file:data/product_options.sql
+        - file:data/product_extended.sql
+        - file:data/users.sql
+        - file:data/reviews.sql
 
 server:
   port: 8081

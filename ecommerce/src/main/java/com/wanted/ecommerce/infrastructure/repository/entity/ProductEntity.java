@@ -1,12 +1,24 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
+import com.wanted.ecommerce.domain.Product;
 import com.wanted.ecommerce.presentation.enums.ProductStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 상품 엔티티
  */
+@Builder
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "products")
 public class ProductEntity extends CreatedEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -41,6 +53,44 @@ public class ProductEntity extends CreatedEntity {
      * 판매 상태
      */
     @Enumerated(EnumType.STRING)
-    private ProductStatus productStatus;
+    private ProductStatus status;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private SellerEntity seller;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brand;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProductDetailEntity> productDetail = new HashSet<>();
+
+    public static ProductEntity of(Product productRequest, SellerEntity sellerEntity, BrandEntity brandEntity) {
+        return ProductEntity.builder()
+            .name(productRequest.getName())
+            .slug(productRequest.getSlug())
+            .shortDescription(productRequest.getShortDescription())
+            .fullDescription(productRequest.getFullDescription())
+            .status(productRequest.getStatus())
+            .seller(sellerEntity)
+            .brand(brandEntity)
+            .build();
+    }
+
+    public Product toDomain() {
+        return Product.builder()
+            .id(this.id)
+            .name(this.name)
+            .slug(this.slug)
+            .shortDescription(this.shortDescription)
+            .fullDescription(this.fullDescription)
+            .status(this.status)
+            .sellerId(this.seller != null ? this.seller.getId() : null)
+            .brandId(this.brand != null ? this.brand.getId() : null)
+            .details(this.productDetail.stream().map(ProductDetailEntity::toDomain)
+                         .toList())
+            .build();
+    }
 
 }

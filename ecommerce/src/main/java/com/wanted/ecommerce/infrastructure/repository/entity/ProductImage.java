@@ -1,8 +1,14 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "product_images")
 public class ProductImage {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)

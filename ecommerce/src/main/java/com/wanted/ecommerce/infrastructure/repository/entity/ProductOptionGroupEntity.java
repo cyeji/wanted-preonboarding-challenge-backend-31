@@ -1,9 +1,15 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
-public class ProductOptionGroup {
+@Table(name = "product_option_groups")
+public class ProductOptionGroupEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)

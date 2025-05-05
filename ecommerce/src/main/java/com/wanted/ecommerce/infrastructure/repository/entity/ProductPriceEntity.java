@@ -1,11 +1,17 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 상품 가격 엔티티
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "product_prices")
 public class ProductPriceEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
