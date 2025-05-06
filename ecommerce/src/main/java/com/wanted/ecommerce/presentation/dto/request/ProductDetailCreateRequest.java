@@ -3,8 +3,6 @@ package com.wanted.ecommerce.presentation.dto.request;
 import com.wanted.ecommerce.domain.ProductDetail;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 상품 등록 상세 dto
  */
@@ -25,12 +23,6 @@ public class ProductDetailCreateRequest {
 
     private AdditionalInfo additionalInfo;
 
-    private ProductPrice price;
-
-    private List<ProductCategoryRequest> categories;
-
-    private List<OptionGroup> optionGroups;
-
     public ProductDetail toDomain() {
         return ProductDetail.builder()
             .weight(weight)
@@ -40,9 +32,6 @@ public class ProductDetailCreateRequest {
             .warrantyInfo(warrantyInfo)
             .careInstructions(careInstructions)
             .additionalInfo(additionalInfo)
-            .price(price)
-            .categories(categories)
-            .optionGroups(optionGroups)
             .build();
     }
 

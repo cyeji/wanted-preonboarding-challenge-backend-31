@@ -1,24 +1,32 @@
 package com.wanted.ecommerce.presentation.dto.request;
 
-import lombok.Data;
+import com.wanted.ecommerce.infrastructure.repository.entity.ProductOptionGroupEntity;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.util.List;
-
-@Data
+@Getter
+@Builder
 public class OptionGroup {
 
     private String name;
 
     private Double additionalPrice;
 
-    private String sku;
+    //    private String sku;
 
-    private Long stock;
+    //    private Long stock;
 
     private Integer displayOrder;
+    //
+    //    private List<ProductImage> images;
+    //
+    //    private List<Long> tags;
 
-    private List<ProductImage> images;
-
-    private List<Long> tags;
+    public static OptionGroup from(ProductOptionGroupEntity productOptionGroupEntity) {
+        return OptionGroup.builder()
+            .name(productOptionGroupEntity.getName())
+            .displayOrder(productOptionGroupEntity.getDisplayOrder())
+            .build();
+    }
 
 }

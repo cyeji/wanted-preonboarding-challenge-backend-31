@@ -1,21 +1,18 @@
 package com.wanted.ecommerce.application;
 
 import com.wanted.ecommerce.domain.Product;
+import com.wanted.ecommerce.infrastructure.config.error.exception.ProductException;
 import com.wanted.ecommerce.infrastructure.config.error.exception.ProductNotFoundException;
-import com.wanted.ecommerce.infrastructure.repository.BrandRepository;
-import com.wanted.ecommerce.infrastructure.repository.ProductDetailRepository;
-import com.wanted.ecommerce.infrastructure.repository.ProductRepository;
-import com.wanted.ecommerce.infrastructure.repository.SellerRepository;
-import com.wanted.ecommerce.infrastructure.repository.entity.BrandEntity;
-import com.wanted.ecommerce.infrastructure.repository.entity.ProductDetailEntity;
-import com.wanted.ecommerce.infrastructure.repository.entity.ProductEntity;
-import com.wanted.ecommerce.infrastructure.repository.entity.SellerEntity;
+import com.wanted.ecommerce.infrastructure.repository.*;
+import com.wanted.ecommerce.infrastructure.repository.entity.*;
 import com.wanted.ecommerce.presentation.dto.response.ProductResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +22,8 @@ public class ProductService {
     private final SellerRepository sellerRepository;
     private final BrandRepository brandRepository;
     private final ProductDetailRepository productDetailRepository;
+    private final ProductCategoryRepository productCategoryRepository;
+    private final ProductImageRepository productImageEntityRepository;
 
     /**
      * 상품 등록
@@ -44,6 +43,17 @@ public class ProductService {
 
         ProductEntity productEntity = ProductEntity.of(productRequest, sellerEntity, brandEntity);
         productRepository.save(productEntity);
+
+        Set<ProductCategoryEntity> categoryEntities = productRequest.getCategories().stream()
+            .map(dto -> productCategoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new ProductException("카테고리를 찾을 수 없습니다.")))
+            .collect(Collectors.toSet());
+
+        Set<ProductImageEntity> productImage =
+            productRequest.getImages().stream().map(image -> ProductImageEntity.from(image, productEntity)).collect(Collectors.toSet());
+
+        productImageEntityRepository.saveAll(productImage);
+        productCategoryRepository.saveAll(categoryEntities);
 
         List<ProductDetailEntity> detailList = productRequest.getDetails().stream()
             .map(dto -> ProductDetailEntity.builder().materials(dto.getMaterials())

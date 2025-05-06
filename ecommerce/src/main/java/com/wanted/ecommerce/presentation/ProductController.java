@@ -5,7 +5,6 @@ import com.wanted.ecommerce.infrastructure.config.CustomUserDetails;
 import com.wanted.ecommerce.infrastructure.utils.ApiUtils;
 import com.wanted.ecommerce.presentation.dto.request.ProductCreateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class ProductController {
         return ResponseEntity.ok(ApiUtils.success(productService.createProduct(userId, productCreateRequest.convertToDomain())));
     }
 
-    @GetMapping(value = "/products/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/products/{productId}")
     public ResponseEntity getProduct(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable Long productId) {

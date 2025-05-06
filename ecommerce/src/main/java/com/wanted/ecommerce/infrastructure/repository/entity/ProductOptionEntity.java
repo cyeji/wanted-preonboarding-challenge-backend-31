@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 public class ProductOptionEntity {
 
     @Id
+    @Column(name = "option_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 연관 관계 설정 (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_group_id", nullable = false)
     private ProductOptionGroupEntity optionGroup;
@@ -34,5 +34,8 @@ public class ProductOptionEntity {
 
     @Column(name = "display_order")
     private Integer displayOrder = 0;
+
+    @OneToOne(mappedBy = "option", fetch = FetchType.LAZY)
+    private ProductImageEntity image;
 
 }

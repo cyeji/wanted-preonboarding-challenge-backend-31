@@ -1,7 +1,10 @@
 package com.wanted.ecommerce.presentation.dto.request;
 
+import com.wanted.ecommerce.infrastructure.repository.entity.ProductPriceEntity;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class ProductPrice {
 
@@ -14,5 +17,15 @@ public class ProductPrice {
     private String currency;
 
     private Integer taxRate;
+
+    public ProductPriceEntity toEntity() {
+        return ProductPriceEntity.builder()
+            .basePrice(basePrice)
+            .salePrice(salePrice)
+            .costPrice(costPrice)
+            .currency(currency)
+            .taxRate(taxRate)
+            .build();
+    }
 
 }

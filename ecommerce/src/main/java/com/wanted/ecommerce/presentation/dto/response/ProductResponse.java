@@ -1,6 +1,7 @@
 package com.wanted.ecommerce.presentation.dto.response;
 
 import com.wanted.ecommerce.domain.Product;
+import com.wanted.ecommerce.presentation.dto.request.ProductPrice;
 import com.wanted.ecommerce.presentation.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,8 @@ public class ProductResponse {
     private Long brandId;
     private ProductStatus status;
     private List<ProductDetailResponse> details = new ArrayList<>();
+    private ProductPrice price;
+    private List<ProductImageResponse> images = new ArrayList<>();
 
     public static ProductResponse from(Product product) {
         return ProductResponse.builder()
@@ -39,6 +42,8 @@ public class ProductResponse {
             .details(product.getDetails().stream()
                          .map(ProductDetailResponse::from)
                          .toList())
+            .price(product.getPrice())
+            .images(product.getImages().stream().map(ProductImageResponse::from).toList())
             .build();
     }
 

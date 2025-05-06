@@ -1,6 +1,9 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
 import com.wanted.ecommerce.domain.Product;
+import com.wanted.ecommerce.domain.ProductCategory;
+import com.wanted.ecommerce.presentation.dto.request.OptionGroup;
+import com.wanted.ecommerce.presentation.dto.request.ProductImage;
 import com.wanted.ecommerce.presentation.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,7 +24,7 @@ import java.util.Set;
 @Table(name = "products")
 public class ProductEntity extends CreatedEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -63,8 +66,24 @@ public class ProductEntity extends CreatedEntity {
     @JoinColumn(name = "brand_id")
     private BrandEntity brand;
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<ProductDetailEntity> productDetail = new HashSet<>();
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private ProductPriceEntity price;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProductImageEntity> images = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProductOptionGroupEntity> optionGroups = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProductCategoryEntity> categories = new HashSet<>();
 
     public static ProductEntity of(Product productRequest, SellerEntity sellerEntity, BrandEntity brandEntity) {
         return ProductEntity.builder()
@@ -90,6 +109,10 @@ public class ProductEntity extends CreatedEntity {
             .brandId(this.brand != null ? this.brand.getId() : null)
             .details(this.productDetail.stream().map(ProductDetailEntity::toDomain)
                          .toList())
+            .price(this.price.toDomain())
+            .images(this.images.stream().map(ProductImage::toDomain).toList())
+            .optionGroups(this.optionGroups.stream().map(OptionGroup::from).toList())
+            .categories(this.categories.stream().map(ProductCategory::from).toList())
             .build();
     }
 

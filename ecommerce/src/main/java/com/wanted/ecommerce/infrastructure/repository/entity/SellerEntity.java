@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "sellers")
 public class SellerEntity extends UpdatedEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 

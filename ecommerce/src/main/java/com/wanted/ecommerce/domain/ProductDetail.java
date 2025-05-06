@@ -1,6 +1,8 @@
 package com.wanted.ecommerce.domain;
 
-import com.wanted.ecommerce.presentation.dto.request.*;
+import com.wanted.ecommerce.presentation.dto.request.AdditionalInfo;
+import com.wanted.ecommerce.presentation.dto.request.ProductCategoryRequest;
+import com.wanted.ecommerce.presentation.dto.request.ProductDimension;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,10 +26,6 @@ public class ProductDetail {
 
     private AdditionalInfo additionalInfo;
 
-    private ProductPrice price;
-
     private List<ProductCategoryRequest> categories;
-
-    private List<OptionGroup> optionGroups;
 
 }

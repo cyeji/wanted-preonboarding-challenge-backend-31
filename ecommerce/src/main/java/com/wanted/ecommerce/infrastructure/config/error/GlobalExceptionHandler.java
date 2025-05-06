@@ -15,5 +15,12 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity handleException(Exception ex) {
+        return ResponseEntity.internalServerError().body(
+            ErrorResponse.of("INTERNAL_SERVER_ERROR", ex.getMessage())
+        );
+    }
+
 }
 

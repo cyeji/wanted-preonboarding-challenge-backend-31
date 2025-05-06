@@ -1,20 +1,23 @@
 package com.wanted.ecommerce.infrastructure.repository.entity;
 
+import com.wanted.ecommerce.presentation.dto.request.ProductPrice;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 /**
  * 상품 가격 엔티티
  */
+@Builder
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "product_prices")
 public class ProductPriceEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -47,5 +50,19 @@ public class ProductPriceEntity {
      */
     @Column
     private Integer taxRate;
+
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductEntity product;
+
+    public ProductPrice toDomain() {
+        return ProductPrice.builder()
+            .basePrice(basePrice)
+            .salePrice(salePrice)
+            .costPrice(costPrice)
+            .currency(currency)
+            .taxRate(taxRate)
+            .build();
+    }
 
 }

@@ -20,7 +20,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "product_details")
 public class ProductDetailEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
