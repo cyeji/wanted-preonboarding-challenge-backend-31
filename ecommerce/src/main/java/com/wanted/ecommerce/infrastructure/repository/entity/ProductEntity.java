@@ -6,10 +6,7 @@ import com.wanted.ecommerce.presentation.dto.request.OptionGroup;
 import com.wanted.ecommerce.presentation.dto.request.ProductImage;
 import com.wanted.ecommerce.presentation.enums.ProductStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +14,7 @@ import java.util.Set;
 /**
  * 상품 엔티티
  */
+@Getter
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -24,7 +22,8 @@ import java.util.Set;
 @Table(name = "products")
 public class ProductEntity extends CreatedEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -87,33 +86,53 @@ public class ProductEntity extends CreatedEntity {
 
     public static ProductEntity of(Product productRequest, SellerEntity sellerEntity, BrandEntity brandEntity) {
         return ProductEntity.builder()
-            .name(productRequest.getName())
-            .slug(productRequest.getSlug())
-            .shortDescription(productRequest.getShortDescription())
-            .fullDescription(productRequest.getFullDescription())
-            .status(productRequest.getStatus())
-            .seller(sellerEntity)
-            .brand(brandEntity)
-            .build();
+                .name(productRequest.getName())
+                .slug(productRequest.getSlug())
+                .shortDescription(productRequest.getShortDescription())
+                .fullDescription(productRequest.getFullDescription())
+                .status(productRequest.getStatus())
+                .seller(sellerEntity)
+                .brand(brandEntity)
+                .build();
     }
 
     public Product toDomain() {
         return Product.builder()
-            .id(this.id)
-            .name(this.name)
-            .slug(this.slug)
-            .shortDescription(this.shortDescription)
-            .fullDescription(this.fullDescription)
-            .status(this.status)
-            .sellerId(this.seller != null ? this.seller.getId() : null)
-            .brandId(this.brand != null ? this.brand.getId() : null)
-            .details(this.productDetail.stream().map(ProductDetailEntity::toDomain)
-                         .toList())
-            .price(this.price.toDomain())
-            .images(this.images.stream().map(ProductImage::toDomain).toList())
-            .optionGroups(this.optionGroups.stream().map(OptionGroup::from).toList())
-            .categories(this.categories.stream().map(ProductCategory::from).toList())
-            .build();
+                .id(this.id)
+                .name(this.name)
+                .slug(this.slug)
+                .shortDescription(this.shortDescription)
+                .fullDescription(this.fullDescription)
+                .status(this.status)
+                .sellerId(this.seller != null ? this.seller.getId() : null)
+                .brandId(this.brand != null ? this.brand.getId() : null)
+                .details(this.productDetail.stream().map(ProductDetailEntity::toDomain)
+                        .toList())
+                .price(this.price.toDomain())
+                .images(this.images.stream().map(ProductImage::toDomain).toList())
+                .optionGroups(this.optionGroups.stream().map(OptionGroup::from).toList())
+                .categories(this.categories.stream().map(ProductCategory::from).toList())
+                .build();
     }
+
+    public Product toDomain(ProductEntity productEntity) {
+        return Product.builder()
+                .id(productEntity.getId())
+                .name(productEntity.getName())
+                .slug(productEntity.getSlug())
+                .shortDescription(productEntity.getShortDescription())
+                .fullDescription(productEntity.getFullDescription())
+                .status(productEntity.getStatus())
+                .sellerId(productEntity.getSeller() != null ? productEntity.getSeller().getId() : null)
+                .brandId(productEntity.getBrand() != null ? productEntity.getBrand().getId() : null)
+                .details(productEntity.getProductDetail().stream().map(ProductDetailEntity::toDomain)
+                        .toList())
+                .price(productEntity.getPrice().toDomain())
+                .images(productEntity.getImages().stream().map(ProductImage::toDomain).toList())
+                .optionGroups(productEntity.getOptionGroups().stream().map(OptionGroup::from).toList())
+                .categories(productEntity.getCategories().stream().map(ProductCategory::from).toList())
+                .build();
+    }
+
 
 }

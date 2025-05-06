@@ -5,9 +5,14 @@ import com.wanted.ecommerce.infrastructure.config.error.exception.ProductExcepti
 import com.wanted.ecommerce.infrastructure.config.error.exception.ProductNotFoundException;
 import com.wanted.ecommerce.infrastructure.repository.*;
 import com.wanted.ecommerce.infrastructure.repository.entity.*;
+import com.wanted.ecommerce.presentation.dto.request.ProductGetRequest;
 import com.wanted.ecommerce.presentation.dto.response.ProductResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,34 +40,34 @@ public class ProductService {
     @Transactional
     public Product createProduct(Long userId, Product productRequest) {
         SellerEntity sellerEntity = sellerRepository.findById(productRequest.getSellerId()).orElseThrow(() ->
-                                                                                                            new IllegalArgumentException(
-                                                                                                                "판매자가 존재하지 않습니다."));
+                new IllegalArgumentException(
+                        "판매자가 존재하지 않습니다."));
         BrandEntity brandEntity = brandRepository.findById(productRequest.getBrandId()).orElseThrow(() ->
-                                                                                                        new IllegalArgumentException(
-                                                                                                            "브랜드가 존재하지 않습니다."));
+                new IllegalArgumentException(
+                        "브랜드가 존재하지 않습니다."));
 
         ProductEntity productEntity = ProductEntity.of(productRequest, sellerEntity, brandEntity);
         productRepository.save(productEntity);
 
         Set<ProductCategoryEntity> categoryEntities = productRequest.getCategories().stream()
-            .map(dto -> productCategoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new ProductException("카테고리를 찾을 수 없습니다.")))
-            .collect(Collectors.toSet());
+                .map(dto -> productCategoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() -> new ProductException("카테고리를 찾을 수 없습니다.")))
+                .collect(Collectors.toSet());
 
         Set<ProductImageEntity> productImage =
-            productRequest.getImages().stream().map(image -> ProductImageEntity.from(image, productEntity)).collect(Collectors.toSet());
+                productRequest.getImages().stream().map(image -> ProductImageEntity.from(image, productEntity)).collect(Collectors.toSet());
 
         productImageEntityRepository.saveAll(productImage);
         productCategoryRepository.saveAll(categoryEntities);
 
         List<ProductDetailEntity> detailList = productRequest.getDetails().stream()
-            .map(dto -> ProductDetailEntity.builder().materials(dto.getMaterials())
-                .dimensions(dto.getDimensions().toDto())
-                .weight(dto.getWeight())
-                .additionalInfo(dto.getAdditionalInfo())
-                .countryOfOrigin(dto.getCountryOfOrigin())
-                .build())
-            .toList();
+                .map(dto -> ProductDetailEntity.builder().materials(dto.getMaterials())
+                        .dimensions(dto.getDimensions().toDto())
+                        .weight(dto.getWeight())
+                        .additionalInfo(dto.getAdditionalInfo())
+                        .countryOfOrigin(dto.getCountryOfOrigin())
+                        .build())
+                .toList();
 
         productDetailRepository.saveAll(detailList);
 
@@ -78,10 +83,20 @@ public class ProductService {
      */
     public ProductResponse getProduct(Long userId, Long productId) {
         ProductEntity productEntity = productRepository.findById(productId).orElseThrow(() ->
-                                                                                            new ProductNotFoundException("상품이 존재하지 않습니다."));
+                new ProductNotFoundException("상품이 존재하지 않습니다."));
         Product domain = productEntity.toDomain();
 
         return ProductResponse.from(domain);
     }
 
+    public Page<ProductResponse> getProduct(ProductGetRequest productGetRequest, Pageable pageable) {
+        Specification<ProductEntity> specification = Specification.
+                where(ProductEntitySpecification.minPrice(productGetRequest.getMinPrice()))
+                .and(ProductEntitySpecification.maxPrice(productGetRequest.getMaxPrice())).and(ProductEntitySpecification.brand(productGetRequest.getBrand())).and(ProductEntitySpecification.search(productGetRequest.getSearch()));
+
+
+        Page<ProductEntity> productEntityPage = productRepository.findAll(specification, pageable);
+        List<ProductResponse> productResponses = productEntityPage.getContent().stream().map(ProductEntity::toDomain).map(ProductResponse::from).toList();
+        return new PageImpl<>(productResponses, pageable, productEntityPage.getTotalElements());
+    }
 }
